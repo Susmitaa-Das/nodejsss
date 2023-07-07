@@ -34,6 +34,8 @@ import path from 'path'
 
 const app = express()
 
+const users = []
+
 //using middlewares
 app.use(express.static(path.join(path.resolve(), 'public')))
 app.use(express.urlencoded({ extended: true }))
@@ -51,7 +53,8 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  console.log(req.body)
+  users.push({ username: req.body.name, email: req.body.email })
+  res.render('success')
 })
 
 app.listen(5000, () => {
