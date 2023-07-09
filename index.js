@@ -9,9 +9,14 @@ mongoose
   .then(() => console.log('Database Connected'))
   .catch((e) => console.log(e))
 
-const app = express()
+const messageSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+})
 
-const users = []
+const Message = mongoose.model('Message', messageSchema)
+
+const app = express()
 
 //using middlewares
 app.use(express.static(path.join(path.resolve(), 'public')))
@@ -24,16 +29,13 @@ app.get('/', (req, res) => {
   res.render('index', { name: 'chayan' })
 })
 
-app.get('/add', (req, res) => {
-  res.send('Nice')
-})
-
 app.get('/success', (req, res) => {
   res.render('success')
 })
 
-app.post('/contact', (req, res) => {
-  users.push({ username: req.body.name, email: req.body.email })
+app.post('/contact', async (req, res) => {
+  const { name, email } = req.body
+  await Message.create({ name, email })
   res.redirect('/success')
 })
 
