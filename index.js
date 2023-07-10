@@ -1,6 +1,7 @@
 import express from 'express'
 import path from 'path'
 import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser'
 
 mongoose
   .connect('mongodb://127.0.0.1:27017', {
@@ -21,12 +22,21 @@ const app = express()
 //using middlewares
 app.use(express.static(path.join(path.resolve(), 'public')))
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 //Setting up view engine
 app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
-  res.render('index', { name: 'chayan' })
+  res.render('login')
+  console.log(req.cookies)
+})
+
+app.post('/login', (req, res) => {
+  res.cookie('token', 'iamin', {
+    httpOnly: true,expires:new Date(Date.now()+60*1000)
+  })
+  res.redirect('/')
 })
 
 app.get('/success', (req, res) => {
