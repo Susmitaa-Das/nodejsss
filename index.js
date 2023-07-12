@@ -29,7 +29,7 @@ app.set('view engine', 'ejs')
 
 app.get('/', (req, res) => {
   res.render('login')
-  console.log(req.cookies)
+  const {token} = req.cookies
 })
 
 app.post('/login', (req, res) => {
