@@ -41,13 +41,17 @@ const isAuthenticated = async (req, res, next) => {
 }
 
 app.get('/', isAuthenticated, (req, res) => {
-  console.log(req.user)
-  res.render('logout')
+  res.render('logout', { name: req.user.name })
 })
 
 app.post('/login', async (req, res) => {
   const { name, email } = req.body
-  const user = await User.create({
+
+  let user = await User.findOne({ email })
+  if (!user) {
+    return res.redirect('/register')
+  }
+  user = await User.create({
     name,
     email,
   })
