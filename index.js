@@ -45,12 +45,30 @@ app.get('/', isAuthenticated, (req, res) => {
   res.render('logout', { name: req.user.name })
 })
 
-app.get('/login',(req,res)=>{
+app.get('/login', (req, res) => {
   res.render('login')
 })
 
 app.get('/register', (req, res) => {
   res.render('register')
+})
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body
+  let user = await User.findOne({ email })
+
+  if (!user) return res.redirect('/register')
+
+  const isMatch = user.password === password
+  if (!isMatch) return res.render('login', { email, message: 'Incorrect Password' })
+
+  const token = jwt.sign({ _id: user._id }, 'sdjfrjgrjgjgjghfdg')
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 60 * 1000),
+  })
+  res.redirect('/')
 })
 
 app.post('/register', async (req, res) => {
